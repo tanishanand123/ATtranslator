@@ -4,10 +4,10 @@ import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { Card } from './ui/card';
 
-
+import { Toaster } from 'sonner';
 export function TranslatorPage() {
-  const [hindiText, setHindiText] = useState('');
-  const [englishText, setEnglishText] = useState('');
+  const [hindiText, setHindiText] = useState("");
+  const [englishText, setEnglishText] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -48,32 +48,30 @@ export function TranslatorPage() {
   // Mock translation function
   const translateText = async (text) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const translations = {
-      'नमस्ते': 'Hello',
-      'धन्यवाद': 'Thank you',
-      'आप कैसे हैं': 'How are you',
-      'मेरा नाम': 'My name is',
-      'क्या हाल है': "What's up",
-      'खुश रहिए': 'Stay happy',
-      'शुभ प्रभात': 'Good morning',
-      'शुभ रात्रि': 'Good night',
-      'मुझे खुशी है': 'I am happy',
-      'यह अच्छा है': 'This is good'
-    };
-
-    for (const [hindi, english] of Object.entries(translations)) {
-      if (text.toLowerCase().includes(hindi.toLowerCase())) {
-        return english;
-      }
+    console.log("text",text);
+    
+    if (!text.trim()) return alert("Transcript is empty!");
+    try {
+      const res = await fetch("http://127.0.0.1:8000/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: text }),
+      });
+      if (!res.ok) throw new Error(`Status: ${res.status}`);
+      const result = await res.json();
+      console.log(result);
+      
+      return result.data;
+    }catch(e){
+      console.log(e);
     }
-
-    return `[Translated from Hindi] ${text}`;
   };
 
   const handleTranslate = async () => {
-    if (!hindiText.trim()) {
-      toast.error('Please enter some Hindi text to translate.');
+    if (!hindiText?.trim()) {
+      console.log("Please enter some Hindi text to translate.");
+      
+      // toast.error('Please enter some Hindi text to translate.');
       return;
     }
 
@@ -81,9 +79,10 @@ export function TranslatorPage() {
     try {
       const translation = await translateText(hindiText);
       setEnglishText(translation);
-      toast.success('Translation completed!');
-    } catch {
-      toast.error('Translation failed. Please try again.');
+      // toast.success('Translation completed!');
+    } catch(e) {
+      // toast.error('Translation failed. Please try again.');
+      console.log(e);
     } finally {
       setIsTranslating(false);
     }
@@ -196,7 +195,7 @@ export function TranslatorPage() {
                     variant="outline"
                     size="sm"
                     className="rounded-full"
-                    disabled={!englishText.trim()}
+                    // disabled={!englishText.trim()}
                   >
                     <Volume2 className="h-4 w-4" />
                     Speak
@@ -206,7 +205,7 @@ export function TranslatorPage() {
                     variant="outline"
                     size="sm"
                     className="rounded-full"
-                    disabled={!englishText.trim()}
+                    // disabled={!englishText.trim()}
                   >
                     {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                     {isCopied ? 'Copied' : 'Copy'}
