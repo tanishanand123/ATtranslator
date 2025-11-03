@@ -10,6 +10,7 @@ export function Navbar() {
   const navLinks = [
     { path: '/', label: 'Home' },
     { path: '/translator', label: 'Translator' },
+    {path:'http://localhost:3000/',label : 'Search'},
     { path: '/about', label: 'About' },
     { path: '/contact', label: 'Contact' }
   ];
