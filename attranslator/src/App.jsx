@@ -7,8 +7,7 @@ import ContactPage from './components/contactus'
 import { Footer } from './components/footer'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from './components/themeprovider'
-import Search from './components/Search'
-
+import { Search } from './components/search'
 function App() {
 
   return (
@@ -23,6 +22,7 @@ function App() {
               <Route path="http://localhost:3000/"/>
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/search" element={<Search />} />
             </Routes>
           </main>
           <Footer />
